@@ -1,0 +1,35 @@
+CREATE DATABASE bdis;
+USE bdis;
+CREATE DATABASE IF NOT EXISTS bdis;
+USE bdis;
+SELECT COUNT(*) AS Total_Rows
+FROM superstore;
+USE bdis;
+
+SELECT * 
+FROM superstore
+LIMIT 10;
+SELECT SUM(Profit) AS Total_Profit
+FROM superstore;
+select sum(sales) as total_revenue from superstore;
+SELECT AVG(Sales) AS Average_Order_Value
+FROM superstore;
+SELECT MAX(Sales) AS Highest_Sale
+FROM superstore;
+SELECT MIN(Sales) AS Lowest_Sale
+FROM superstore;
+SELECT
+    COUNT(*) AS Total_Orders,
+    SUM(Sales) AS Total_Revenue,
+    SUM(Profit) AS Total_Profit,
+    AVG(Sales) AS Average_Order_Value,
+    MAX(Sales) AS Highest_Sale,
+    MIN(Sales) AS Lowest_Sale
+FROM superstore;
+
+
+
+
+
+
+
