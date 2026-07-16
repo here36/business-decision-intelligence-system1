@@ -1,0 +1,120 @@
+CREATE DATABASE bdis;
+USE bdis;
+CREATE DATABASE IF NOT EXISTS bdis;
+USE bdis;
+SELECT COUNT(*) AS Total_Rows
+FROM superstore;
+USE bdis;
+
+SELECT * 
+FROM superstore
+LIMIT 10;
+SELECT SUM(Profit) AS Total_Profit
+FROM superstore;
+select sum(sales) as total_revenue from superstore;
+SELECT AVG(Sales) AS Average_Order_Value
+FROM superstore;
+SELECT MAX(Sales) AS Highest_Sale
+FROM superstore;
+SELECT MIN(Sales) AS Lowest_Sale
+FROM superstore;
+SELECT
+    COUNT(*) AS Total_Orders,
+    SUM(Sales) AS Total_Revenue,
+    SUM(Profit) AS Total_Profit,
+    AVG(Sales) AS Average_Order_Value,
+    MAX(Sales) AS Highest_Sale,
+    MIN(Sales) AS Lowest_Sale
+FROM superstore;
+
+--
+SELECT
+    `Product Name`,
+    SUM(Sales) AS Revenue
+FROM superstore
+GROUP BY `Product Name`
+ORDER BY Revenue DESC
+LIMIT 10;
+
+SELECT
+    `Product Name`,
+    SUM(Profit) AS Profit
+FROM superstore
+GROUP BY `Product Name`
+ORDER BY Profit DESC
+LIMIT 10;
+
+SELECT
+    `Product Name`,
+    SUM(Profit) AS Loss
+FROM superstore
+GROUP BY `Product Name`
+ORDER BY Loss ASC
+LIMIT 10;
+
+SELECT
+    Category,
+    SUM(Sales) AS Total_Sales
+FROM superstore
+GROUP BY Category
+ORDER BY Total_Sales DESC;
+
+SELECT
+    Category,
+    SUM(Profit) AS Total_Profit
+FROM superstore
+GROUP BY Category
+ORDER BY Total_Profit DESC;
+
+SELECT
+    Region,
+    SUM(Sales) AS Total_Sales
+FROM superstore
+GROUP BY Region
+ORDER BY Total_Sales DESC;
+
+SELECT
+    Region,
+    SUM(Profit) AS Total_Profit
+FROM superstore
+GROUP BY Region
+ORDER BY Total_Profit DESC;
+
+SELECT
+    `Customer Name`,
+    SUM(Sales) AS Revenue
+FROM superstore
+GROUP BY `Customer Name`
+ORDER BY Revenue DESC
+LIMIT 10;
+
+
+SELECT
+    `Customer Name`,
+    SUM(Profit) AS Profit
+FROM superstore
+GROUP BY `Customer Name`
+HAVING Profit < 0
+ORDER BY Profit ASC;
+
+SELECT
+    `Ship Mode`,
+    COUNT(*) AS Orders
+FROM superstore
+GROUP BY `Ship Mode`
+ORDER BY Orders DESC;
+
+SELECT
+    YEAR(`Order Date`) AS Year,
+    SUM(Sales) AS Revenue
+FROM superstore
+GROUP BY YEAR(`Order Date`)
+ORDER BY Year;
+
+SELECT
+    YEAR(`Order Date`) AS Year,
+    MONTH(`Order Date`) AS Month,
+    SUM(Sales) AS Revenue
+FROM superstore
+GROUP BY YEAR(`Order Date`), MONTH(`Order Date`)
+ORDER BY Year, Month;
