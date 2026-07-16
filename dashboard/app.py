@@ -1,7 +1,18 @@
 import streamlit as st
 import sys
 import os
-
+from sidebar import sidebar_filters
+from metrics import get_metrics
+from insights import business_insights
+from charts import sales_by_category_chart
+from charts import (
+    sales_by_category_chart,
+    monthly_revenue_chart,
+    sales_by_segment_chart,
+    profit_by_region_chart,
+    top_products_chart,
+    loss_products_chart,
+)
 st.set_page_config(
     page_title="Business Decision Intelligence System",
     page_icon="📊",
@@ -15,40 +26,15 @@ from data_loader import load_data
 
 # Load data
 df = load_data()
-st.sidebar.title("📊 Dashboard Filters")
+df = sidebar_filters(df)
 
-st.sidebar.markdown("---")
-
-st.sidebar.write("Use the filters below to analyze specific data.")
-
-selected_region = st.sidebar.selectbox(
-    "Select Region",
-    ["All"] + sorted(df["Region"].unique().tolist())
-)
-
-if selected_region != "All":
-    df = df[df["Region"] == selected_region]
-
-selected_category = st.sidebar.selectbox(
-    "Select Category",
-    ["All"] + sorted(df["Category"].unique().tolist())
-)
-
-if selected_category != "All":
-    df = df[df["Category"] == selected_category]
-# ----------------------------
-# Calculate KPIs
-# ----------------------------
-
-total_revenue = df["Sales"].sum()
-
-total_profit = df["Profit"].sum()
-
-total_orders = len(df)
-
-unique_customers = df["Customer ID"].nunique()
-
-loss_products = df[df["Profit"] < 0]["Product Name"].nunique()
+(
+    total_revenue,
+    total_profit,
+    total_orders,
+    unique_customers,
+    loss_products,
+) = get_metrics(df)
 
 # ----------------------------
 # Dashboard Title
@@ -56,7 +42,9 @@ loss_products = df[df["Profit"] < 0]["Product Name"].nunique()
 
 st.title("📊 Business Decision Intelligence System")
 
-st.write("A Data Analytics Dashboard built using Python and Streamlit")
+st.markdown("""
+### Interactive Sales Analytics Dashboard
+""")
 
 # ----------------------------
 # KPI Cards
@@ -76,103 +64,36 @@ col4.metric("👥 Unique Customers", unique_customers)
 
 col5.metric("❌ Loss Products", loss_products)
 
-st.divider()
+col1, col2 = st.columns(2)
 
-st.subheader("📊 Sales by Category")
+with col1:
+    sales_by_category_chart(df)
 
-category_sales = (
-    df.groupby("Category")["Sales"]
-      .sum()
-      .reset_index()
-)
+with col2:
+    sales_by_segment_chart(df)
 
-st.bar_chart(
-    category_sales,
-    x="Category",
-    y="Sales"
-)
 
-st.divider()
 
-st.subheader("📈 Monthly Revenue Trend")
 
-monthly_sales = (
-    df.groupby(df["Order Date"].dt.to_period("M"))["Sales"]
-      .sum()
-      .reset_index()
-)
+col3, col4 = st.columns(2)
 
-monthly_sales["Order Date"] = monthly_sales["Order Date"].astype(str)
+with col3:
+    monthly_revenue_chart(df)
 
-st.line_chart(
-    monthly_sales,
-    x="Order Date",
-    y="Sales"
-)
-st.divider()
+with col4:
+    profit_by_region_chart(df)
 
-st.subheader("🥧 Sales by Customer Segment")
+col5, col6 = st.columns(2)
 
-segment_sales = (
-    df.groupby("Segment")["Sales"]
-      .sum()
-      .reset_index()
-)
+with col5:
+    top_products_chart(df)
 
-st.bar_chart(
-    segment_sales,
-    x="Segment",
-    y="Sales"
-)
-st.divider()
+with col6:
+    loss_products_chart(df)
 
-st.subheader("📊 Profit by Region")
 
-region_profit = (
-    df.groupby("Region")["Profit"]
-      .sum()
-      .reset_index()
-)
+business_insights(df)
 
-st.bar_chart(
-    region_profit,
-    x="Region",
-    y="Profit"
-)
-
-st.divider()
-
-st.subheader("💡 Business Insights")
-
-category_sales = df.groupby("Category")["Sales"].sum()
-category_profit = df.groupby("Category")["Profit"].sum()
-region_sales = df.groupby("Region")["Sales"].sum()
-segment_sales = df.groupby("Segment")["Sales"].sum()
-
-st.success(
-    f"Highest Revenue Category: **{category_sales.idxmax()}** "
-    f"(₹{category_sales.max():,.2f})"
-)
-
-st.success(
-    f"Most Profitable Category: **{category_profit.idxmax()}** "
-    f"(₹{category_profit.max():,.2f})"
-)
-
-st.info(
-    f"Best Performing Region: **{region_sales.idxmax()}** "
-    f"(₹{region_sales.max():,.2f})"
-)
-
-st.info(
-    f"Top Customer Segment: **{segment_sales.idxmax()}** "
-    f"(₹{segment_sales.max():,.2f})"
-)
-
-st.warning(
-    f"Lowest Profit Category: **{category_profit.idxmin()}** "
-    f"(₹{category_profit.min():,.2f})"
-)
 st.divider()
 
 st.caption(
@@ -180,13 +101,15 @@ st.caption(
 )
 st.divider()
 
-st.subheader("📋 Dataset Preview")
+st.subheader("📋 Filtered Dataset Preview")
+
+st.write("Showing the data after applying the selected filters.")
 
 st.dataframe(df)
 csv = df.to_csv(index=False).encode("utf-8")
 
 st.download_button(
-    label="📥 Download Filtered Data",
+   label="📥 Download Filtered Dataset (CSV)",
     data=csv,
     file_name="filtered_data.csv",
     mime="text/csv"
