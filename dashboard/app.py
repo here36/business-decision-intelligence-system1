@@ -44,25 +44,24 @@ st.title("📊 Business Decision Intelligence System")
 
 st.markdown("""
 ### Interactive Sales Analytics Dashboard
+
 """)
 
 # ----------------------------
 # KPI Cards
 # ----------------------------
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 col1.metric("💰 Total Revenue", f"₹{total_revenue:,.2f}")
-
 col2.metric("📈 Total Profit", f"₹{total_profit:,.2f}")
 
+col3, col4 = st.columns(2)
+
 col3.metric("📦 Total Orders", total_orders)
-
-col4, col5 = st.columns(2)
-
 col4.metric("👥 Unique Customers", unique_customers)
 
-col5.metric("❌ Loss Products", loss_products)
+st.metric("❌ Loss Products", loss_products)
 
 col1, col2 = st.columns(2)
 
@@ -94,11 +93,7 @@ with col6:
 
 business_insights(df)
 
-st.divider()
 
-st.caption(
-    "Business Decision Intelligence System | Built using Python, Pandas, SQL, Matplotlib and Streamlit"
-)
 st.divider()
 
 st.subheader("📋 Filtered Dataset Preview")
@@ -113,4 +108,9 @@ st.download_button(
     data=csv,
     file_name="filtered_data.csv",
     mime="text/csv"
+)
+st.divider()
+
+st.caption(
+    "Developed by Aaditi Salunkhe | Python • Pandas • SQL • Streamlit • Matplotlib"
 )

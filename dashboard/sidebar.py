@@ -22,7 +22,7 @@ def sidebar_filters(df):
     if selected_category != "All":
         df = df[df["Category"] == selected_category]
 
-        st.sidebar.markdown("---")
+    st.sidebar.markdown("---")
+    st.sidebar.caption("Built by Aaditi Salunkhe")
 
-        st.sidebar.caption("Built by Aaditi Salunkhe")
-        return df
+    return df
